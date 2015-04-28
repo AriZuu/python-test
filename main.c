@@ -45,6 +45,7 @@ void ledOffTask(void* arg)
 
      posTaskSleep(MS(60000));
      GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN0);
+     uosResourceDiag();
    }
 }
 #endif

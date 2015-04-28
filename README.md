@@ -9,4 +9,6 @@ You'll be needing following modules in parallel to this to build:
 - cmsis-ports
 - micropython
 
+Working python is also required for build host.
+
 [1]: http://micropython.org/
