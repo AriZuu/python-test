@@ -1,3 +1,7 @@
+/*
+ * This stuff has been gathered from other MicroPython ports. It 
+ * needs some clennup. It allows running python on Pico]OS console.
+ */
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -7,7 +11,6 @@
 #include "py/runtime.h"
 #include "py/repl.h"
 #include "py/gc.h"
-//#include "pyexec.h"
 
 STATIC bool compile_only = false;
 STATIC uint emit_opt = MP_EMIT_OPT_NONE;
@@ -234,8 +237,4 @@ void MP_WEAK __assert_func(const char *file, int line, const char *func, const c
     printf("Assertion '%s' failed, at file %s:%d\n", expr, file, line);
     __fatal_error("Assertion failed");
 }
-#endif
-
-#if !MICROPY_MIN_USE_STDOUT
-//void _start(void) {main(0, NULL);}
 #endif
