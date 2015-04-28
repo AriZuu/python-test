@@ -53,10 +53,18 @@ void pyTask(void* arg)
 {
   char* argv[] = { "lua" };
   uosBootDiag();
+
 #ifndef unix
+
+/*
+ * Start a task which outputs resource usage and
+ * turns led off.
+ */
   POSTASK_t ledOff = posTaskCreate(ledOffTask, NULL, 3, 500);
   POS_SETTASKNAME(ledOff, "ledOff");
+
 #endif
+
   mp_main(1, argv);
 }
 
