@@ -247,7 +247,11 @@
  * This define must be set to the tickrate of the timer
  * interrupt (= timer ticks per second).
  */
+#ifdef unix
 #define HZ                   10  /* timer ticks per second */
+#else
+#define HZ                   64  /* timer ticks per second */
+#endif
 
 /**
  * Defines the crystal clock in HZ
