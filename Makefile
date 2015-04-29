@@ -37,7 +37,7 @@ export CORTEX
 #PORT ?= unix
 #CPU ?= 32
 
-BUILD = DEBUG
+BUILD ?= DEBUG
 
 EXTRA_CFLAGS=-std=gnu99
 LD_SCRIPTS=launchpad.ld
@@ -46,7 +46,7 @@ include $(RELROOT)make/common.mak
 
 NANO = 1
 TARGET = mp-test
-SRC_TXT =	startup.c main.c mp_main.c
+SRC_TXT =	startup.c main.c mptask.c modlaunchpad.c
 SRC_HDR=
 SRC_OBJ = 
 SRC_LIB = -lm
