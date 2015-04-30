@@ -30,5 +30,8 @@
 
 #define _FS_READONLY 1
 #define UOSCFG_SPIN_USECS 0
+
+#ifndef unix
 #define UOSCFG_FAT 1
 #define UOSCFG_NEWLIB_SYSCALLS 1
+#endif
