@@ -376,7 +376,7 @@
  * If this definition is set to 1, the mutex functions are
  * added to the user API.
  */
-#define POSCFG_FEATURE_MUTEXES       0
+#define POSCFG_FEATURE_MUTEXES       1
 
 /** Include function ::posMutexDestroy.
  * If this definition is set to 1, the function ::posMutexDestroy will

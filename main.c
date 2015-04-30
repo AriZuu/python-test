@@ -52,6 +52,7 @@ void ledOffTask(void* arg)
 void pyTask(void* arg)
 {
   char* argv[] = { "lua" };
+  uosInit();
   uosBootDiag();
 
 #ifndef unix
@@ -67,6 +68,32 @@ void pyTask(void* arg)
 
   mp_main(1, argv);
 }
+
+#if UOSCFG_FAT
+
+#include "diskio.h"
+
+/*
+ * FAT fs routines for "disk drive", ie. disk.fat file.
+ */
+
+DSTATUS disk_status(BYTE drv)
+{
+  return 0;
+}
+
+
+DSTATUS disk_initialize(BYTE drv)
+{
+  return STA_NOINIT;
+}
+
+DRESULT disk_read(BYTE drv, BYTE *buff, DWORD sector, UINT count)
+{
+  return RES_OK;
+}
+
+#endif
 
 int main(int argc, char **argv)
 {
