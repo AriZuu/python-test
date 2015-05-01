@@ -6,6 +6,8 @@
 #include <stdio.h>
 #include <string.h>
 
+#include <sys/stat.h>
+
 #include "py/nlr.h"
 #include "py/compile.h"
 #include "py/runtime.h"
@@ -212,18 +214,27 @@ void gc_collect(void) {
 #endif
 }
 
-mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
-    return NULL;
-}
+//mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
+ //   return NULL;
+//}
 
 mp_import_stat_t mp_import_stat(const char *path) {
+    struct stat st;
+    if (stat(path, &st) == 0) {
+        if (S_ISDIR(st.st_mode)) {
+            return MP_IMPORT_STAT_DIR;
+        } else if (S_ISREG(st.st_mode)) {
+            return MP_IMPORT_STAT_FILE;
+        }
+    }
     return MP_IMPORT_STAT_NO_EXIST;
+
 }
 
-mp_obj_t mp_builtin_open(uint n_args, const mp_obj_t *args, mp_map_t *kwargs) {
-    return mp_const_none;
-}
-MP_DEFINE_CONST_FUN_OBJ_KW(mp_builtin_open_obj, 1, mp_builtin_open);
+//mp_obj_t mp_builtin_open(uint n_args, const mp_obj_t *args, mp_map_t *kwargs) {
+ //   return mp_const_none;
+//}
+//MP_DEFINE_CONST_FUN_OBJ_KW(mp_builtin_open_obj, 1, mp_builtin_open);
 
 void nlr_jump_fail(void *val) {
 }
@@ -238,3 +249,7 @@ void MP_WEAK __assert_func(const char *file, int line, const char *func, const c
     __fatal_error("Assertion failed");
 }
 #endif
+
+int fsync(int fd)
+{
+}
