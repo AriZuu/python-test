@@ -1,7 +1,37 @@
 /*
+ * This file is part of the Micro Python project, http://micropython.org/
+ *
+ * The MIT License (MIT)
+ *
+ * Copyright (c) 2013, 2014 Damien P. George
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+ * THE SOFTWARE.
+ */
+
+
+/*
  * This stuff has been gathered from other MicroPython ports. It 
  * needs some clennup. It allows running python on Pico]OS console.
  */
+
+#include <picoos.h>
+
 #include <stdint.h>
 #include <stdio.h>
 #include <string.h>
@@ -13,23 +43,11 @@
 #include "py/runtime.h"
 #include "py/repl.h"
 #include "py/gc.h"
+#include "unix/input.h"
 
 STATIC bool compile_only = false;
 STATIC uint emit_opt = MP_EMIT_OPT_NONE;
 mp_uint_t mp_verbose_flag = 0;
-STATIC char *strjoin(const char *s1, int sep_char, const char *s2) {
-    int l1 = strlen(s1);
-    int l2 = strlen(s2);
-    char *s = malloc(l1 + l2 + 2);
-    memcpy(s, s1, l1);
-    if (sep_char != 0) {
-        s[l1] = sep_char;
-        l1 += 1;
-    }
-    memcpy(s + l1, s2, l2);
-    s[l1 + l2] = 0;
-    return s;
-}
 
 #define FORCED_EXIT (0x100)
 // If exc is SystemExit, return value where FORCED_EXIT bit set,
@@ -50,31 +68,6 @@ STATIC int handle_uncaught_exception(mp_obj_t exc) {
     // Report all other exceptions
     mp_obj_print_exception(&mp_plat_print, exc);
     return 1;
-}
-
-char *prompt(char *p) {
-#if MICROPY_USE_READLINE
-    char *line = readline(p);
-    if (line) {
-        add_history(line);
-    }
-#else
-    static char buf[256];
-    fputs(p, stdout);
-    char *s = fgets(buf, sizeof(buf), stdin);
-    if (!s) {
-        return NULL;
-    }
-    int l = strlen(buf);
-    if (buf[l - 1] == '\n') {
-        buf[l - 1] = 0;
-    } else {
-        l++;
-    }
-    char *line = malloc(l);
-    memcpy(line, buf, l);
-#endif
-    return line;
 }
 
 // Returns standard error codes: 0 for success, 1 for all other errors,
@@ -121,8 +114,22 @@ STATIC int execute_from_lexer(mp_lexer_t *lex, mp_parse_input_kind_t input_kind,
     }
 }
 
+STATIC char *strjoin(const char *s1, int sep_char, const char *s2) {
+    int l1 = strlen(s1);
+    int l2 = strlen(s2);
+    char *s = malloc(l1 + l2 + 2);
+    memcpy(s, s1, l1);
+    if (sep_char != 0) {
+        s[l1] = sep_char;
+        l1 += 1;
+    }
+    memcpy(s + l1, s2, l2);
+    s[l1 + l2] = 0;
+    return s;
+}
+
 STATIC int do_repl(void) {
-    printf("Micro Python\n"); //
+    printf("Pico]OS Micro Python\n");
 
     for (;;) {
         char *line = prompt(">>> ");
@@ -150,26 +157,6 @@ STATIC int do_repl(void) {
     }
 }
 
-void do_str(const char *src) {
-    mp_lexer_t *lex = mp_lexer_new_from_str_len(MP_QSTR__lt_stdin_gt_, src, strlen(src), 0);
-    if (lex == NULL) {
-        printf("MemoryError: lexer could not allocate memory\n");
-        return;
-    }
-
-    nlr_buf_t nlr;
-    if (nlr_push(&nlr) == 0) {
-        qstr source_name = lex->source_name;
-        mp_parse_node_t pn = mp_parse(lex, MP_PARSE_SINGLE_INPUT);
-        mp_obj_t module_fun = mp_compile(pn, source_name, MP_EMIT_OPT_NONE, true);
-        mp_call_function_0(module_fun);
-        nlr_pop();
-    } else {
-        // uncaught exception
-        mp_obj_print_exception(&mp_plat_print, (mp_obj_t)nlr.ret_val);
-    }
-}
-
 static char *stack_top;
     #if MICROPY_ENABLE_GC
 static char heap[2048];
@@ -183,21 +170,7 @@ int mp_main(int argc, char **argv) {
     gc_init(heap, heap + sizeof(heap));
     #endif
     mp_init();
-#if 0
-    #if MICROPY_REPL_EVENT_DRIVEN
-    pyexec_friendly_repl_init();
-    for (;;) {
-        int c = stdin_rx_chr();
-        if (pyexec_friendly_repl_process_char(c)) {
-            break;
-        }
-    }
-    #else
-    pyexec_friendly_repl();
-    #endif
-#endif
     do_repl();
-    //do_str("print('hello world!', list(x+1 for x in range(10)), end='eol\\n')");
     mp_deinit();
     return 0;
 }
@@ -229,27 +202,4 @@ mp_import_stat_t mp_import_stat(const char *path) {
     }
     return MP_IMPORT_STAT_NO_EXIST;
 
-}
-
-//mp_obj_t mp_builtin_open(uint n_args, const mp_obj_t *args, mp_map_t *kwargs) {
- //   return mp_const_none;
-//}
-//MP_DEFINE_CONST_FUN_OBJ_KW(mp_builtin_open_obj, 1, mp_builtin_open);
-
-void nlr_jump_fail(void *val) {
-}
-
-void NORETURN __fatal_error(const char *msg) {
-    while (1);
-}
-
-#ifndef NDEBUG
-void MP_WEAK __assert_func(const char *file, int line, const char *func, const char *expr) {
-    printf("Assertion '%s' failed, at file %s:%d\n", expr, file, line);
-    __fatal_error("Assertion failed");
-}
-#endif
-
-int fsync(int fd)
-{
 }
