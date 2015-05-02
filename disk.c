@@ -31,67 +31,28 @@
 #include <picoos.h>
 #include <picoos-u.h>
 
-#ifndef unix
-#include "driverlib.h"
+#if UOSCFG_FAT
 
-void ledOffTask(void*);
-#endif
-void pyTask(void*);
-
-#ifndef unix
-void ledOffTask(void* arg)
-{
-   while (1) {
-
-     posTaskSleep(MS(60000));
-     GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN0);
-     uosResourceDiag();
-   }
-}
-#endif
-void pyTask(void* arg)
-{
-  char* argv[] = { "lua" };
-  uosInit();
-  uosBootDiag();
-
-#ifndef unix
+#include "diskio.h"
 
 /*
- * Start a task which outputs resource usage and
- * turns led off.
+ * FAT fs routines for "disk drive", ie. disk.fat file.
  */
-  POSTASK_t ledOff = posTaskCreate(ledOffTask, NULL, 3, 500);
-  POS_SETTASKNAME(ledOff, "ledOff");
 
-#endif
-
-  mp_main(1, argv);
-}
-
-int main(int argc, char **argv)
+DSTATUS disk_status(BYTE drv)
 {
-#ifndef unix
-  /*
-   * Configure pins as uart.
-   */
-  MAP_GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
-    GPIO_PIN2 | GPIO_PIN3, GPIO_PRIMARY_MODULE_FUNCTION);
-
-  /*
-   * Configure LED pins as output.
-   */
-  MAP_GPIO_setAsOutputPin(GPIO_PORT_P1, GPIO_PIN0);
-  GPIO_setOutputHighOnPin(GPIO_PORT_P1, GPIO_PIN0);
-
-  /*
-   * LED on.
-   */
-  GPIO_setOutputHighOnPin(GPIO_PORT_P1, GPIO_PIN0);
-#endif
-  /*
-   * Start scheduler.
-   */
-  nosInit(pyTask, NULL, 2, 4096, 1024);
   return 0;
 }
+
+
+DSTATUS disk_initialize(BYTE drv)
+{
+  return STA_NOINIT;
+}
+
+DRESULT disk_read(BYTE drv, BYTE *buff, DWORD sector, UINT count)
+{
+  return RES_OK;
+}
+
+#endif
