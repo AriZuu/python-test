@@ -175,22 +175,6 @@ int mp_main(int argc, char **argv) {
     return 0;
 }
 
-void gc_collect(void) {
-#if 0
-    // WARNING: This gc_collect implementation doesn't try to get root
-    // pointers from CPU registers, and thus may function incorrectly.
-    void *dummy;
-    gc_collect_start();
-    gc_collect_root(&dummy, ((mp_uint_t)stack_top - (mp_uint_t)&dummy) / sizeof(mp_uint_t));
-    gc_collect_end();
-    gc_dump_info();
-#endif
-}
-
-//mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
- //   return NULL;
-//}
-
 mp_import_stat_t mp_import_stat(const char *path) {
     struct stat st;
     if (stat(path, &st) == 0) {
