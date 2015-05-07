@@ -2,6 +2,9 @@ This is a simple test application for Pico]OS [micropython][1] port.
 It runs on Texas Instruments MSP432 launchpad (using uart console) and
 PIC32 chips.
 
+PIC32 port is preliminary, I don't have real hardware (yet)
+so it has been tested only under MPLAB X simulator.
+
 You'll be needing following modules in parallel to this to build:
 
 - picoos
