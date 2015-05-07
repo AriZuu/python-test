@@ -43,6 +43,7 @@
 #include "py/runtime.h"
 #include "py/repl.h"
 #include "py/gc.h"
+#include "genhdr/mpversion.h"
 #include "unix/input.h"
 
 STATIC bool compile_only = false;
@@ -129,7 +130,7 @@ STATIC char *strjoin(const char *s1, int sep_char, const char *s2) {
 }
 
 STATIC int do_repl(void) {
-    printf("Pico]OS Micro Python\n");
+    printf("Micro Python " MICROPY_GIT_TAG " on " MICROPY_BUILD_DATE " " MICROPY_PY_SYS_PLATFORM " version\n");
 
     for (;;) {
         char *line = prompt(">>> ");
