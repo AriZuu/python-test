@@ -27,7 +27,7 @@
 # ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED
 # OF THE POSSIBILITY OF SUCH DAMAGE.
 
-RELROOT = ../picoos/
+RELROOT = ../../picoos/
 
 PORT ?= cortex-m
 CPU ?= msp432
@@ -52,13 +52,13 @@ SRC_OBJ =
 SRC_LIB = -lm
 
 # CMSIS setup
-CMSIS_MODULES=$(CURRENTDIR)/../cmsis-ports/msp432-driverlib
+CMSIS_MODULES=$(CURRENTDIR)/../../cmsis-ports/msp432-driverlib
 MSP432_CHIP = __MSP432P401R__
 export MSP432_CHIP
 
 DIR_CONFIG = $(CURRENTDIR)
 DIR_OUTPUT = $(CURRENTDIR)/bin
-MODULES +=  ../picoos-micro ../picoos-python
+MODULES +=  ../../picoos-micro ../../picoos-python
 
 POSTLINK1 = arm-none-eabi-size $(TARGETOUT)
 
