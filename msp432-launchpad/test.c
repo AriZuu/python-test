@@ -48,7 +48,15 @@ void ledOffTask(void* arg)
      uosResourceDiag();
    }
 }
+
+static const UosMount pmpFs = { 
+  "/rom/",
+  &uosRomFS,
+  "/"
+};
+
 #endif
+
 void pyTask(void* arg)
 {
   char* argv[] = { "lua" };
@@ -56,6 +64,8 @@ void pyTask(void* arg)
   uosBootDiag();
 
 #ifndef unix
+
+  uosMount(&pmpFs);
 
 /*
  * Start a task which outputs resource usage and
