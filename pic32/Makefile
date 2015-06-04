@@ -30,7 +30,7 @@
 RELROOT = ../../picoos/
 
 PORT = pic32
-MCU = 32MX170F256B
+MCU = 32MX270F256B
 export MCU
 
 BUILD ?= RELEASE
