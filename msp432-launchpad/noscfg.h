@@ -72,7 +72,7 @@
  *   2 = The user supplys its own memory allocation routines.
  *       See defines ::NOSCFG_MEM_USER_MALLOC and ::NOSCFG_MEM_USER_FREE.
  */
-#define NOSCFG_MEM_MANAGER_TYPE      0
+#define NOSCFG_MEM_MANAGER_TYPE      2
 
 /** Overwrite standard malloc/realloc/free/memcpy/memset functions with
  *  nano layer memory functions: @n
@@ -105,7 +105,7 @@ extern void *__heap_end;
  * @note ::NOSCFG_MEM_MANAGER_TYPE must be set to type 2
  *       to enable the use of a user supplied memory allocator.
  */
-#define NOSCFG_MEM_USER_MALLOC       mymalloc
+#define NOSCFG_MEM_USER_MALLOC       __real_malloc
 
 /** User defined memory free function.
  * The user may supply its own memory allocator functions.
@@ -114,7 +114,16 @@ extern void *__heap_end;
  * @note ::NOSCFG_MEM_MANAGER_TYPE must be set to type 2
  *       to enable the use of a user supplied memory allocator.
  */
-#define NOSCFG_MEM_USER_FREE         myfree
+#define NOSCFG_MEM_USER_FREE         __real_free
+
+/** User defined memory reallocation function.
+ * The user may supply its own memory allocator functions.
+ * This define is set to the function name of the user's
+ * memory allocation function.
+ * @note ::NOSCFG_MEM_MANAGER_TYPE must be set to type 2
+ *       to enable the use of a user supplied memory allocator.
+ */
+#define NOSCFG_MEM_USER_REALLOC       __real_realloc
 
 /** Number of bytes reserved in the stack frame for the memory allocator.
  * If heap memory is used for stack memory at task creation, there can
@@ -161,7 +170,7 @@ extern void *__heap_end;
  *        should set ::NOSCFG_MEM_MANAGE_MODE to 1. Otherwise the memory
  *        will fragment too much if ::nosMemRealloc is used frequently.
  */
-#define NOSCFG_FEATURE_REALLOC       0
+#define NOSCFG_FEATURE_REALLOC       1
 
 /** @} */
 
