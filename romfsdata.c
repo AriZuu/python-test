@@ -20,7 +20,7 @@ static const unsigned char file_1[] = {
 
 const UosRomFile uosRomFiles[] = {
 { "test.py",  file_1, sizeof(file_1) },
-{ "__init__.py",  "", 0 },
+{ "__init__.py",  (const unsigned char*)"", 0 },
 { NULL,  NULL, 0 }
 };
 #endif
