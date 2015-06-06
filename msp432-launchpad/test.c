@@ -50,7 +50,7 @@ void ledOffTask(void* arg)
 }
 
 static const UosMount pmpFs = { 
-  "/rom/",
+  "/rom",
   &uosRomFS,
   "/"
 };
