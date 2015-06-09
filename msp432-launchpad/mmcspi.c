@@ -102,7 +102,6 @@ void spiControl(bool max)
   else
     SPI_changeMasterClock(EUSCI_B0_MODULE, 24000000, 400000);
 
-  nosPrintf("fullSpeed not implemented\n");
   SPI_enableModule(EUSCI_B0_MODULE);
 }
 
