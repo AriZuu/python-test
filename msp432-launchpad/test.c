@@ -55,6 +55,14 @@ static const UosMount pmpFs = {
   "/"
 };
 
+static const UosMount pmpFs2 = {
+  "/",
+  &uosFatFS,
+  "0:/"
+};
+
+extern const UosMMC_SPI mmcSpi;
+
 #endif
 
 void pyTask(void* arg)
@@ -65,7 +73,11 @@ void pyTask(void* arg)
 
 #ifndef unix
 
+  uosSetDiskDriver(&uosMMC_Disk);
+  uosSetMMC_SPI(&mmcSpi);
+
   uosMount(&pmpFs);
+  uosMount(&pmpFs2);
 
 /*
  * Start a task which outputs resource usage and

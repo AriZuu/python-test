@@ -160,7 +160,7 @@ STATIC int do_repl(void) {
 
 static char *stack_top;
     #if MICROPY_ENABLE_GC
-static char heap[2048];
+static char heap[10240];
 #endif
 
 int mp_main(int argc, char **argv) {
