@@ -28,7 +28,9 @@
  * OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 
-#define _FS_READONLY 1
+#define _FS_READONLY 0
+#define _FS_REENTRANT 1
+
 #define UOSCFG_SPIN_USECS 0
 
 #ifndef unix
