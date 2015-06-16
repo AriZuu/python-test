@@ -49,19 +49,8 @@ void ledOffTask(void* arg)
    }
 }
 
-static const UosMount pmpFs = { 
-  "/rom",
-  &uosRomFS,
-  "/"
-};
-
-static const UosMount pmpFs2 = {
-  "/",
-  &uosFatFS,
-  "0:/"
-};
-
-extern const UosMMC_SPI mmcSpi;
+extern const UosMmcSpi_I mmcSpi;
+extern const UosRomFile romFiles[] ;
 
 #endif
 
@@ -73,11 +62,11 @@ void pyTask(void* arg)
 
 #ifndef unix
 
-  uosSetDiskDriver(&uosMMC_Disk);
-  uosSetMMC_SPI(&mmcSpi);
+  uosAddDisk(&uosMmcDisk_I);
+  uosSetMmcSpi(&mmcSpi);
 
-  uosMount(&pmpFs);
-  uosMount(&pmpFs2);
+  uosMountFat("/", 0);
+  uosMountRom("/rom", romFiles);
 
 /*
  * Start a task which outputs resource usage and

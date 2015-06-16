@@ -46,15 +46,15 @@ static void    spiControl(bool fullSpeed);
 static void    spiCs(bool select);
 static uint8_t spiXchg(uint8_t data);
 
-const UosMMC_SPI mmcSpi = {
+const UosMmcSpi_I mmcSpi = {
 
   .open    = spiOpen,
   .close   = spiClose,
   .control = spiControl,
   .cs      = spiCs,
   .xchg    = spiXchg,
-  .xmit    = uosMMC_SPIxmit,
-  .rcvr    = uosMMC_SPIrcvr
+  .xmit    = uosMmcSpiXmit,
+  .rcvr    = uosMmcSpiRcvr
 };
 
 static const eUSCI_SPI_MasterConfig spiMasterConfig =
