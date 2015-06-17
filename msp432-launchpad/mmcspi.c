@@ -40,13 +40,14 @@
 // P1.7 MISO
 // P5.2 CS
 
-static void    spiOpen(void);
-static void    spiClose(void);
-static void    spiControl(bool fullSpeed);
-static void    spiCs(bool select);
-static uint8_t spiXchg(uint8_t data);
+static void    spiOpen(const UosMmcDisk* adisk);
+static void    spiClose(const UosMmcDisk* adisk);
+static void    spiControl(const UosMmcDisk* adisk, bool fullSpeed);
+static void    spiCs(const UosMmcDisk* adisk, bool select);
+static uint8_t spiXchg(const UosMmcDisk* adisk, uint8_t data);
+void addDisks(void);
 
-const UosMmcSpi_I mmcSpi = {
+static const UosMmcSpi_I mmcSpi = {
 
   .open    = spiOpen,
   .close   = spiClose,
@@ -56,6 +57,29 @@ const UosMmcSpi_I mmcSpi = {
   .xmit    = uosMmcSpiXmit,
   .rcvr    = uosMmcSpiRcvr
 };
+
+typedef struct {
+
+  UosMmcDisk base;
+  int csPort;
+  int csPin;
+} Card;
+
+static const Card cardDef = {
+  .base = {
+    .base = { 
+      .i = &uosMmcDisk_I
+    },
+    .i = &mmcSpi
+  },
+  .csPort = GPIO_PORT_P5,
+  .csPin  = GPIO_PIN2
+};
+
+void addDisks()
+{
+  uosAddDisk(&cardDef.base.base);
+}
 
 static const eUSCI_SPI_MasterConfig spiMasterConfig =
 {
@@ -68,7 +92,7 @@ static const eUSCI_SPI_MasterConfig spiMasterConfig =
   EUSCI_B_SPI_3PIN                           // 3Wire SPI Mode
 };
 
-void spiOpen ()
+void spiOpen(const UosMmcDisk* adisk)
 {
   GPIO_setAsOutputPin(GPIO_PORT_P5, GPIO_PIN2);
   GPIO_setOutputHighOnPin(GPIO_PORT_P5, GPIO_PIN2);
@@ -81,20 +105,22 @@ void spiOpen ()
   SPI_enableModule(EUSCI_B0_MODULE);
 }
 
-void spiClose()
+void spiClose(const UosMmcDisk* adisk)
 {
   SPI_disableModule(EUSCI_B0_MODULE);
 }
 
-void spiCs (bool select)
+void spiCs (const UosMmcDisk* adisk, bool select)
 {
+  Card* card = (Card*)adisk;
+
   if (select)
-    GPIO_setOutputLowOnPin(GPIO_PORT_P5, GPIO_PIN2);
+    GPIO_setOutputLowOnPin(card->csPort, card->csPin);
   else
-    GPIO_setOutputHighOnPin(GPIO_PORT_P5, GPIO_PIN2);
+    GPIO_setOutputHighOnPin(card->csPort, card->csPin);
 }
 
-void spiControl(bool max)
+void spiControl(const UosMmcDisk* adisk, bool max)
 {
   SPI_disableModule(EUSCI_B0_MODULE);
   if (max)
@@ -105,7 +131,7 @@ void spiControl(bool max)
   SPI_enableModule(EUSCI_B0_MODULE);
 }
 
-uint8_t spiXchg(uint8_t dat)
+uint8_t spiXchg(const UosMmcDisk* adisk, uint8_t dat)
 {
   SPI_transmitData(EUSCI_B0_MODULE, dat);
   return SPI_receiveData(EUSCI_B0_MODULE);

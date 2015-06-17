@@ -49,8 +49,8 @@ void ledOffTask(void* arg)
    }
 }
 
-extern const UosMmcSpi_I mmcSpi;
 extern const UosRomFile romFiles[] ;
+extern void addDisks(void);
 
 #endif
 
@@ -62,9 +62,7 @@ void pyTask(void* arg)
 
 #ifndef unix
 
-  uosAddDisk(&uosMmcDisk_I);
-  uosSetMmcSpi(&mmcSpi);
-
+  addDisks();
   uosMountFat("/", 0);
   uosMountRom("/rom", romFiles);
 
