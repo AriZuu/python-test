@@ -39,4 +39,5 @@
 #define UOSCFG_FAT 2
 #define UOSCFG_FAT_MMC 1
 #define UOSCFG_NEWLIB_SYSCALLS 1
+#define UOSCFG_SPI_BUS 1
 #endif

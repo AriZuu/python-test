@@ -34,106 +34,43 @@
 
 #include "driverlib.h"
 
-// Connections: 
-// P1.5 SPICLK
-// P1.6 MOSI
-// P1.7 MISO
-// P5.2 CS
+static void    mmcOpen(const UosMmcDisk* adisk);
+static void    mmcClose(const UosMmcDisk* adisk);
 
-static void    spiOpen(const UosMmcDisk* adisk);
-static void    spiClose(const UosMmcDisk* adisk);
-static void    spiControl(const UosMmcDisk* adisk, bool fullSpeed);
-static void    spiCs(const UosMmcDisk* adisk, bool select);
-static uint8_t spiXchg(const UosMmcDisk* adisk, uint8_t data);
-void addDisks(void);
+void addDisks(UosSpiBus*);
 
 static const UosMmcSpi_I mmcSpi = {
 
-  .open    = spiOpen,
-  .close   = spiClose,
-  .control = spiControl,
-  .cs      = spiCs,
-  .xchg    = spiXchg,
-  .xmit    = uosMmcSpiXmit,
-  .rcvr    = uosMmcSpiRcvr
+  .open    = mmcOpen,
+  .close   = mmcClose
 };
 
 typedef struct {
 
   UosMmcDisk base;
-  int csPort;
-  int csPin;
 } Card;
 
-static const Card cardDef = {
+static Card cardDef = {
   .base = {
     .base = { 
       .i = &uosMmcDisk_I
     },
     .i = &mmcSpi
-  },
-  .csPort = GPIO_PORT_P5,
-  .csPin  = GPIO_PIN2
+  }
 };
 
-void addDisks()
+void addDisks(UosSpiBus* spi)
 {
+  cardDef.base.spi = spi;
+  cardDef.base.spiAddress = 2;
   uosAddDisk(&cardDef.base.base);
 }
 
-static const eUSCI_SPI_MasterConfig spiMasterConfig =
+void mmcOpen(const UosMmcDisk* adisk)
 {
-  EUSCI_B_SPI_CLOCKSOURCE_SMCLK,             // SMCLK Clock Source
-  24000000,                                  // SMCLK = 24 Mhz
-  400000,                                    // SPICLK = 400khz
-  EUSCI_B_SPI_MSB_FIRST,                     // MSB First
-  EUSCI_B_SPI_PHASE_DATA_CHANGED_ONFIRST_CAPTURED_ON_NEXT,    // Phase
-  EUSCI_B_SPI_CLOCKPOLARITY_INACTIVITY_HIGH, // High polarity
-  EUSCI_B_SPI_3PIN                           // 3Wire SPI Mode
-};
-
-void spiOpen(const UosMmcDisk* adisk)
-{
-  GPIO_setAsOutputPin(GPIO_PORT_P5, GPIO_PIN2);
-  GPIO_setOutputHighOnPin(GPIO_PORT_P5, GPIO_PIN2);
-
-  GPIO_setAsPeripheralModuleFunctionInputPin(GPIO_PORT_P1,
-                                             GPIO_PIN5 | GPIO_PIN6 | GPIO_PIN7, 
-                                             GPIO_PRIMARY_MODULE_FUNCTION);
-
-  SPI_initMaster(EUSCI_B0_MODULE, &spiMasterConfig);
-  SPI_enableModule(EUSCI_B0_MODULE);
 }
 
-void spiClose(const UosMmcDisk* adisk)
+void mmcClose(const UosMmcDisk* adisk)
 {
-  SPI_disableModule(EUSCI_B0_MODULE);
-}
-
-void spiCs (const UosMmcDisk* adisk, bool select)
-{
-  Card* card = (Card*)adisk;
-
-  if (select)
-    GPIO_setOutputLowOnPin(card->csPort, card->csPin);
-  else
-    GPIO_setOutputHighOnPin(card->csPort, card->csPin);
-}
-
-void spiControl(const UosMmcDisk* adisk, bool max)
-{
-  SPI_disableModule(EUSCI_B0_MODULE);
-  if (max)
-    SPI_changeMasterClock(EUSCI_B0_MODULE, 24000000, 10000000);
-  else
-    SPI_changeMasterClock(EUSCI_B0_MODULE, 24000000, 400000);
-
-  SPI_enableModule(EUSCI_B0_MODULE);
-}
-
-uint8_t spiXchg(const UosMmcDisk* adisk, uint8_t dat)
-{
-  SPI_transmitData(EUSCI_B0_MODULE, dat);
-  return SPI_receiveData(EUSCI_B0_MODULE);
 }
 

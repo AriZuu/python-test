@@ -50,7 +50,8 @@ void ledOffTask(void* arg)
 }
 
 extern const UosRomFile romFiles[] ;
-extern void addDisks(void);
+extern void addDisks(UosSpiBus*);
+extern UosSpiBus* addSpiBus(void);
 
 #endif
 
@@ -62,7 +63,7 @@ void pyTask(void* arg)
 
 #ifndef unix
 
-  addDisks();
+  addDisks(addSpiBus());
   uosMountFat("/", 0);
   uosMountRom("/rom", romFiles);
 
