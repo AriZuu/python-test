@@ -39,7 +39,7 @@ static void    mmcClose(const UosMmcDisk* adisk);
 
 void addDisks(UosSpiBus*);
 
-static const UosMmcSpi_I mmcSpi = {
+static const UosMmcSpiConf mmcSpi = {
 
   .open    = mmcOpen,
   .close   = mmcClose
@@ -53,9 +53,9 @@ typedef struct {
 static Card cardDef = {
   .base = {
     .base = { 
-      .i = &uosMmcDisk_I
+      .cf = &uosMmcDiskConf
     },
-    .i = &mmcSpi
+    .cf = &mmcSpi
   }
 };
 

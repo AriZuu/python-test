@@ -47,7 +47,7 @@ static void    spiControl(UosSpiBus* bus, bool fullSpeed);
 static void    spiCs(UosSpiBus* bus, bool select);
 static uint8_t spiXchg(const UosSpiBus* bus, uint8_t data);
 
-static const UosSpiBus_I spiBus_I = {
+static const UosSpiBusConf spiBusConf = {
   .init   = spiInit,
   .cs     = spiCs,
   .control= spiControl,
@@ -56,7 +56,7 @@ static const UosSpiBus_I spiBus_I = {
 
 
 static UosSpiBus spiBus = {
-  .i = &spiBus_I
+  .cf = &spiBusConf
 };
 
 UosSpiBus* addSpiBus()
