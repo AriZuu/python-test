@@ -39,7 +39,7 @@ static void    mmcClose(const UosMmcDisk* adisk);
 
 void addDisks(UosSpiBus*);
 
-static const UosMmcSpiConf mmcSpi = {
+static const UosMmcSpiConf mmcSpiConf = {
 
   .open    = mmcOpen,
   .close   = mmcClose
@@ -47,22 +47,26 @@ static const UosMmcSpiConf mmcSpi = {
 
 typedef struct {
 
+  UosSpiDevConf base;
+  int dummy;
+} DevConf;
+
+typedef struct {
+
   UosMmcDisk base;
 } Card;
 
-static Card cardDef = {
-  .base = {
-    .base = { 
-      .cf = &uosMmcDiskConf
-    },
-    .cf = &mmcSpi
-  }
-};
+static Card cardDef;
+static UosSpiDev sdDev;
+static DevConf sdConf;
 
 void addDisks(UosSpiBus* spi)
 {
-  cardDef.base.spi = spi;
-  cardDef.base.spiAddress = 2;
+  cardDef.base.base.cf = &uosMmcDiskConf;
+  cardDef.base.cf = &mmcSpiConf;
+  cardDef.base.dev = &sdDev;
+
+  uosSpiDevInit(&sdDev, &sdConf.base, spi);
   uosAddDisk(&cardDef.base.base);
 }
 
