@@ -366,5 +366,8 @@ extern void *__heap_end;
 
 #define PORTCFG_CONSOLE_SPEED		     115200
 #define NOSCFG_FEATURE_USE_STDARG 1
+#define NOSCFG_FEATURE_SEMAPHORES 1
+#define NOSCFG_FEATURE_FLAGS 1
+#define NOSCFG_FEATURE_MUTEXES 1
 
 #endif /* _NOSCFG_H */

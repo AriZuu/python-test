@@ -85,11 +85,7 @@ STATIC MP_DEFINE_CONST_DICT(gpio_locals_dict, gpio_locals_dict_table);
 STATIC const mp_obj_type_t gpio_type = {
     { &mp_type_type },
     .name = MP_QSTR_Gpio,
-    .print = NULL,
     .make_new = gpio_make_new,
-    .getiter = NULL,
-    .iternext = NULL,
-    .stream_p = NULL,
     .locals_dict = (mp_obj_t)&gpio_locals_dict,
 };
 
@@ -106,6 +102,5 @@ STATIC MP_DEFINE_CONST_DICT(mp_module_launchpad_globals, mp_module_launchpad_glo
 
 const mp_obj_module_t mp_module_launchpad = {
     .base = { &mp_type_module },
-    .name = MP_QSTR_launchpad,
     .globals = (mp_obj_dict_t*)&mp_module_launchpad_globals,
 };

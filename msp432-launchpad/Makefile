@@ -43,7 +43,7 @@ include $(RELROOT)make/common.mak
 
 NANO = 1
 TARGET = mp-test
-SRC_TXT =	startup.c test.c ../romfsdata.c mptask.c modlaunchpad.c ../../micropython/unix/file.c spibus.c mmcspi.c
+SRC_TXT =	startup.c test.c ../romfsdata.c mptask.c modlaunchpad.c ../../micropython/ports/unix/file.c spibus.c mmcspi.c
 SRC_HDR=
 SRC_OBJ = 
 SRC_LIB = -lm

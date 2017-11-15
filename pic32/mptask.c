@@ -26,8 +26,8 @@
 
 
 /*
- * This stuff has been gathered from other MicroPython ports. It 
- * needs some clennup. It allows running python on Pico]OS console.
+ * This stuff has been gathered from other MicroPython ports.
+ * It demonstrates executing some python statements.
  */
 
 #include <picoos.h>
@@ -42,13 +42,12 @@
 #include "py/repl.h"
 #include "py/gc.h"
 #include "genhdr/mpversion.h"
-#include "unix/input.h"
 
 STATIC bool compile_only = false;
 STATIC uint emit_opt = MP_EMIT_OPT_NONE;
 mp_uint_t mp_verbose_flag = 0;
-
 #define FORCED_EXIT (0x100)
+
 // If exc is SystemExit, return value where FORCED_EXIT bit set,
 // and lower 8 bits are SystemExit value. For all other exceptions,
 // return 1.
@@ -89,15 +88,8 @@ STATIC int execute_from_lexer(mp_lexer_t *lex, mp_parse_input_kind_t input_kind,
         }
         #endif
 
-        mp_parse_node_t pn = mp_parse(lex, input_kind);
-
-        /*
-        printf("----------------\n");
-        mp_parse_node_print(pn, 0);
-        printf("----------------\n");
-        */
-
-        mp_obj_t module_fun = mp_compile(pn, source_name, emit_opt, is_repl);
+        mp_parse_tree_t parse_tree = mp_parse(lex, input_kind);
+        mp_obj_t module_fun = mp_compile(&parse_tree, source_name, emit_opt, is_repl);
 
         if (!compile_only) {
             // execute it
@@ -113,47 +105,10 @@ STATIC int execute_from_lexer(mp_lexer_t *lex, mp_parse_input_kind_t input_kind,
     }
 }
 
-STATIC char *strjoin(const char *s1, int sep_char, const char *s2) {
-    int l1 = strlen(s1);
-    int l2 = strlen(s2);
-    char *s = malloc(l1 + l2 + 2);
-    memcpy(s, s1, l1);
-    if (sep_char != 0) {
-        s[l1] = sep_char;
-        l1 += 1;
-    }
-    memcpy(s + l1, s2, l2);
-    s[l1 + l2] = 0;
-    return s;
-}
+STATIC int do_str(const char* line) {
 
-STATIC int do_repl(void) {
-    printf("Micro Python " MICROPY_GIT_TAG " on " MICROPY_BUILD_DATE " " MICROPY_PY_SYS_PLATFORM " version\n");
-
-    for (;;) {
-        char *line = prompt(">>> ");
-        if (line == NULL) {
-            // EOF
-            return 0;
-        }
-        while (mp_repl_continue_with_input(line)) {
-            char *line2 = prompt("... ");
-            if (line2 == NULL) {
-                break;
-            }
-            char *line3 = strjoin(line, '\n', line2);
-            free(line);
-            free(line2);
-            line = line3;
-        }
-
-        mp_lexer_t *lex = mp_lexer_new_from_str_len(MP_QSTR__lt_stdin_gt_, line, strlen(line), false);
-        int ret = execute_from_lexer(lex, MP_PARSE_SINGLE_INPUT, true);
-        if (ret & FORCED_EXIT) {
-            return ret;
-        }
-        free(line);
-    }
+    mp_lexer_t *lex = mp_lexer_new_from_str_len(MP_QSTR__lt_stdin_gt_, line, strlen(line), false);
+    int ret = execute_from_lexer(lex, MP_PARSE_SINGLE_INPUT, true);
 }
 
 static char *stack_top;
@@ -169,7 +124,9 @@ int mp_main(int argc, char **argv) {
     gc_init(heap, heap + sizeof(heap));
     #endif
     mp_init();
-    do_repl();
+    printf("Micro Python " MICROPY_GIT_TAG " on " MICROPY_BUILD_DATE " " MICROPY_PY_SYS_PLATFORM " version\n");
+    do_str("print('hello world!', list(x+1 for x in range(10)), end='eol\\n')");
+
     mp_deinit();
     return 0;
 }
@@ -183,7 +140,7 @@ mp_lexer_t *mp_lexer_new_from_file(const char *filename) {
     return NULL;
 }
 
-mp_obj_t mp_builtin_open(uint n_args, const mp_obj_t *args, mp_map_t *kwargs) {
-    return mp_const_none;
+void nlr_jump_fail(void *val) {
+    printf("FATAL: uncaught NLR %p\n", val);
+    exit(1);
 }
-MP_DEFINE_CONST_FUN_OBJ_KW(mp_builtin_open_obj, 1, mp_builtin_open);

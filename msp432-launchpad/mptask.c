@@ -44,7 +44,7 @@
 #include "py/repl.h"
 #include "py/gc.h"
 #include "genhdr/mpversion.h"
-#include "unix/input.h"
+#include "ports/unix/input.h"
 
 STATIC bool compile_only = false;
 STATIC uint emit_opt = MP_EMIT_OPT_NONE;
@@ -91,7 +91,7 @@ STATIC int execute_from_lexer(mp_lexer_t *lex, mp_parse_input_kind_t input_kind,
         }
         #endif
 
-        mp_parse_node_t pn = mp_parse(lex, input_kind);
+        mp_parse_tree_t parse_tree = mp_parse(lex, input_kind);
 
         /*
         printf("----------------\n");
@@ -99,7 +99,7 @@ STATIC int execute_from_lexer(mp_lexer_t *lex, mp_parse_input_kind_t input_kind,
         printf("----------------\n");
         */
 
-        mp_obj_t module_fun = mp_compile(pn, source_name, emit_opt, is_repl);
+        mp_obj_t module_fun = mp_compile(&parse_tree, source_name, emit_opt, is_repl);
 
         if (!compile_only) {
             // execute it
@@ -187,4 +187,8 @@ mp_import_stat_t mp_import_stat(const char *path) {
     }
     return MP_IMPORT_STAT_NO_EXIST;
 
+}
+void nlr_jump_fail(void *val) {
+    printf("FATAL: uncaught NLR %p\n", val);
+    exit(1);
 }

@@ -453,7 +453,7 @@
  * If this definition is set to 1, the flags functions are
  * added to the user API.
  */
-#define POSCFG_FEATURE_FLAGS         0
+#define POSCFG_FEATURE_FLAGS         1
 
 /** Include function ::posFlagDestroy.
  * If this definition is set to 1, the function ::posFlagDestroy will

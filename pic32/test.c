@@ -78,6 +78,6 @@ int main(int argc, char **argv)
   /*
    * Start scheduler.
    */
-  nosInit(pyTask, NULL, 2, 4096, 1024);
+  nosInit(pyTask, NULL, 2, 6096, 1024);
   return 0;
 }

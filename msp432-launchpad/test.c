@@ -94,3 +94,8 @@ int main(int argc, char **argv)
   nosInit(pyTask, NULL, 2, 4096, 1024);
   return 0;
 }
+
+// Something makes reference to _fini(). Add a dummy one.
+void _fini()
+{
+}
