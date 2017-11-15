@@ -55,13 +55,11 @@ static const UosSpiBusConf spiBusConf = {
 };
 
 
-static UosSpiBus spiBus = {
-  .cf = &spiBusConf
-};
+static UosSpiBus spiBus;
 
 UosSpiBus* addSpiBus()
 {
-  uosSpiInit(&spiBus);
+  uosSpiInit(&spiBus, &spiBusConf);
   return &spiBus;
 }
 
