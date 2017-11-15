@@ -30,7 +30,6 @@
 
 #include <picoos.h>
 
-#ifndef unix
 #include "driverlib.h"
 
 uint32_t SystemCoreClock;
@@ -244,4 +243,3 @@ PortExcHandlerFunc vectorTable[] __attribute__ ((section(".vectors"))) =
     Default_Handler,               // Reserved 63
     Default_Handler                // Reserved 64
 };
-#endif

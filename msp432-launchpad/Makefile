@@ -34,9 +34,6 @@ CPU ?= msp432
 CORTEX = m4
 export CORTEX
 
-#PORT ?= unix
-#CPU ?= 32
-
 BUILD ?= DEBUG
 
 EXTRA_CFLAGS=-std=gnu99

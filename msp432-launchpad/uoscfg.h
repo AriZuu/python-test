@@ -33,11 +33,9 @@
 
 #define UOSCFG_SPIN_USECS 0
 
-#ifndef unix
 #define UOSCFG_MAX_OPEN_FILES 2
 #define UOSCFG_FS_ROM 2
 #define UOSCFG_FAT 2
 #define UOSCFG_FAT_MMC 1
 #define UOSCFG_NEWLIB_SYSCALLS 1
 #define UOSCFG_SPI_BUS 1
-#endif

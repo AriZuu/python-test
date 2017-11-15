@@ -37,10 +37,7 @@
 #include "py/runtime.h"
 #include "py/stream.h"
 #include "py/builtin.h"
-
-#ifndef unix
 #include "driverlib.h"
-#endif
 
 /*
  * Simple GPIO class.
@@ -56,12 +53,10 @@ STATIC mp_obj_t gpio_set(mp_obj_t self_in, mp_obj_t arg) {
     mp_obj_gpio_t *self = self_in;
     int val = mp_obj_get_int(arg);
 
-#ifndef unix
     if (val)
         GPIO_setOutputHighOnPin(GPIO_PORT_P1, GPIO_PIN0);
     else
         GPIO_setOutputLowOnPin(GPIO_PORT_P1, GPIO_PIN0);
-#endif
 
     return mp_const_none;
 }

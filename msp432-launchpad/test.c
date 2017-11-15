@@ -31,14 +31,11 @@
 #include <picoos.h>
 #include <picoos-u.h>
 
-#ifndef unix
 #include "driverlib.h"
 
 void ledOffTask(void*);
-#endif
 void pyTask(void*);
 
-#ifndef unix
 void ledOffTask(void* arg)
 {
    while (1) {
@@ -53,15 +50,11 @@ extern const UosRomFile romFiles[] ;
 extern void addDisks(UosSpiBus*);
 extern UosSpiBus* addSpiBus(void);
 
-#endif
-
 void pyTask(void* arg)
 {
   char* argv[] = { "lua" };
   uosInit();
   uosBootDiag();
-
-#ifndef unix
 
   addDisks(addSpiBus());
   uosMountFat("/", 0);
@@ -74,14 +67,11 @@ void pyTask(void* arg)
   POSTASK_t ledOff = posTaskCreate(ledOffTask, NULL, 3, 500);
   POS_SETTASKNAME(ledOff, "ledOff");
 
-#endif
-
   mp_main(1, argv);
 }
 
 int main(int argc, char **argv)
 {
-#ifndef unix
   /*
    * Configure pins as uart.
    */
@@ -98,7 +88,6 @@ int main(int argc, char **argv)
    * LED on.
    */
   GPIO_setOutputHighOnPin(GPIO_PORT_P1, GPIO_PIN0);
-#endif
   /*
    * Start scheduler.
    */
