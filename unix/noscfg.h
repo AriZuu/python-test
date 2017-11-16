@@ -223,7 +223,7 @@ extern void *__heap_end;
  *        either call ::c_nos_keyinput or rise the software interrupt 0
  *        to feed keyboard data into the nano layer.
  */
-#define NOSCFG_FEATURE_CONIN         0
+#define NOSCFG_FEATURE_CONIN         1
 
 /** Set keyboard buffer size (in bytes).
  * If the console input is enabled (when ::NOSCFG_FEATURE_CONIN is to 1),
