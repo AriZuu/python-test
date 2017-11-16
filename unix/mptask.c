@@ -65,9 +65,10 @@ int mp_main(int argc, char **argv) {
     struct termios oldtio,newtio;
 
     tcgetattr(0,&oldtio);
-    tcgetattr(0,&newtio);
 
+    newtio = oldtio;
     cfmakeraw(&newtio);
+    newtio.c_oflag |= OPOST | ONLCR;
     newtio.c_cc[VMIN]=1;
     newtio.c_cc[VTIME]=0;
 
